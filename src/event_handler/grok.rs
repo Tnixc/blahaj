@@ -36,8 +36,7 @@ static EMOTE_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r":(\w+):").unwra
 /// strip the numeric IDs back down to bare `:name:` form before feeding message
 /// content to the model. This keeps emote IDs out of the model's context, so it
 /// only ever sees the human-readable name.
-static EMOTE_ID_RE: LazyLock<Regex> =
-    LazyLock::new(|| Regex::new(r"<a?:(\w+):\d+>").unwrap());
+static EMOTE_ID_RE: LazyLock<Regex> = LazyLock::new(|| Regex::new(r"<a?:(\w+):\d+>").unwrap());
 
 const SYSTEM_PROMPT: &str = r#"
 You are blahaj, a helpful and concise assistant living inside a Discord
@@ -273,7 +272,9 @@ fn substitute_emotes(reply: &str, emojis: &[Emoji]) -> String {
 /// emote's name, never its numeric ID.
 fn strip_emote_ids(content: &str) -> String {
     EMOTE_ID_RE
-        .replace_all(content, |caps: &regex::Captures<'_>| format!(":{}:", &caps[1]))
+        .replace_all(content, |caps: &regex::Captures<'_>| {
+            format!(":{}:", &caps[1])
+        })
         .into_owned()
 }
 
